@@ -1,0 +1,54 @@
+/*
+ * AI Agricultural Rover - Core Firmware
+ * Hardware: ESP32, L298N Motor Driver, DHT22, Soil Moisture Sensor
+ */
+
+// Define Motor Control Pins (L298N)
+#define ENA 14
+#define IN1 27
+#define IN2 26
+#define IN3 25
+#define IN4 33
+#define ENB 32
+
+// Define Sensor Pins
+#define SOIL_MOISTURE_PIN 34
+
+void setup() {
+  Serial.begin(115200);
+  
+  // Initialize Motor Pins
+  pinMode(ENA, OUTPUT); pinMode(IN1, OUTPUT); pinMode(IN2, OUTPUT);
+  pinMode(IN3, OUTPUT); pinMode(IN4, OUTPUT); pinMode(ENB, OUTPUT);
+  
+  // Initialize Sensors
+  pinMode(SOIL_MOISTURE_PIN, INPUT);
+  
+  Serial.println("Agricultural Rover Initialized. Ready for Telemetry.");
+}
+
+void loop() {
+  readSoilMoisture();
+  // Example Autonomous Movement Logic
+  moveForward(150); 
+  delay(2000);
+  stopMotors();
+  delay(5000); // Pause for sensor reading and vision capture
+}
+
+void readSoilMoisture() {
+  int moistureLevel = analogRead(SOIL_MOISTURE_PIN);
+  Serial.print("Soil Moisture Level: ");
+  Serial.println(moistureLevel);
+}
+
+void moveForward(int speed) {
+  analogWrite(ENA, speed); analogWrite(ENB, speed);
+  digitalWrite(IN1, HIGH); digitalWrite(IN2, LOW);
+  digitalWrite(IN3, HIGH); digitalWrite(IN4, LOW);
+}
+
+void stopMotors() {
+  digitalWrite(IN1, LOW); digitalWrite(IN2, LOW);
+  digitalWrite(IN3, LOW); digitalWrite(IN4, LOW);
+}
